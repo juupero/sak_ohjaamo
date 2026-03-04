@@ -173,6 +173,56 @@ with st.sidebar:
 # ----------------- MASTER DASHBOARD -----------------
 st.title("Päiväkodin Resurssi- ja SAK-ohjaamo")
 
+with st.expander("📖 Käyttöohje – miten sovellus toimii", expanded=False):
+    st.markdown("""
+### Mikä tämä on?
+Tämä sovellus auttaa päiväkodin johtajaa tai tiimiä suunnittelemaan **SAK-ajat** (suunnittelu-, arviointi- ja kehittämisaika) viikkokalenteriin siten, että lakisääteiset suhdeluvut pysyvät kunnossa koko ajan.
+
+---
+
+### 1. Aseta henkilökunta (vasen sivupalkki → Asetukset)
+- **Opettajat (SAK):** Lisää kaikki talon varhaiskasvatuksen opettajat. Heille lasketaan SAK-tunnit.
+- **Hoitajat (Ei SAK):** Lisää lastenhoitajat. He eivät kerytä SAK-aikaa mutta vaikuttavat suhdelukuun.
+- Kirjoita nimi kenttään ja paina **Enter** lisätäksesi. Poista napsauttamalla nimen perässä olevaa ×.
+
+### 2. Hallitse ryhmiä (vasen sivupalkki → Ryhmien hallinta)
+- Lisää uusi lapsiryhmä kirjoittamalla nimi ja painamalla **Lisää ryhmä**.
+- Poista ryhmä painamalla **Poista: [nimi]** -painiketta.
+
+### 3. Syötä päivittäiset tiedot (ryhmän välilehti → Päivittäinen kapasiteetti)
+Jokaiselle ryhmälle ja jokaiselle viikonpäivälle (Ma–Pe) syötään:
+- **Alle 3v / Yli 3v / Eskarit** – lasten määrä ikäryhmittäin (vaikuttaa suhdelukuun).
+- **Opettajat ja Hoitajat** – valitse kyseiselle päivälle paikalla olevat työntekijät.
+
+### 4. Lue kalenteri (ryhmän välilehti → Ryhmän kalenteri)
+Kalenteri näyttää tunnit 08–16 viikonpäivittäin. Sarakkeet:
+| Sarake | Merkitys |
+|--------|----------|
+| **[Päivä]** | Ohjelma (esim. Ulkoilu, Lounas). Voit muokata. |
+| **[Pv] SAK** | SAK-vuorossa oleva opettaja. Valitse pudotusvalikosta. |
+| **[Pv] Extrat** | Lisähenkilöstö kyseiselle tunnille (pilkulla erotettu). |
+| **[Pv] Huom.** | Automaattiset varoitukset + omat muistiinpanot (erotin `\|`). |
+| **Kapasiteetti** | Rivikohtainen OK/Vajaa-tarkistus. |
+
+**Värikoodit:**
+- 🟢 Vihreä = SAK-aika asetettu
+- 🔴 Punainen = ylikapasiteetti tai alimiehitys
+- 🔵 Sininen = poikkeava tapahtuma (esim. palaveri)
+- ⬜ Harmaa = Poissa
+
+### 5. Seuraa SAK-kertymää
+Jokaisen ryhmän välilehden alaosassa näkyy **SAK-kertymät**: kuinka monta tuntia kullekin opettajalle on merkitty (tavoite 5 h/vk). Yläosassa näkyvät **hälytykset** puuttuvista SAK-tunneista tai alimiehityksistä.
+
+### 6. Automaattinen SAK-ehdotus
+Paina **🤖 Automaattinen SAK-aikojen ehdotus** -painiketta, niin sovellus täyttää puuttuvat SAK-tunnit automaattisesti ottaen huomioon suhdeluvut ja tarvittaessa **henkilöstölainat** ryhmien välillä.
+
+### 7. Yhteiset menot (vasen sivupalkki → Yhteiset menot)
+Lisää koko talon yhteisiä tapahtumia (esim. palaveri), jotka kopioidaan automaattisesti kaikkien ryhmien kalentereihin.
+
+---
+*💡 Vinkki: Aloita lisäämällä henkilökunta → luo ryhmät → syötä lapsimäärät → aseta SAK-ajat tai käytä automaattiehdotusta.*
+    """)
+
 total_children_mon = sum(g["daily_stats"]["Maanantai"]["under_3"] + g["daily_stats"]["Maanantai"]["over_3"] + g["daily_stats"]["Maanantai"]["preschool"] for g in st.session_state.groups)
 total_staff_mon = sum(len(g["daily_stats"]["Maanantai"]["teachers"]) + len(g["daily_stats"]["Maanantai"]["nurses"]) for g in st.session_state.groups)
 
