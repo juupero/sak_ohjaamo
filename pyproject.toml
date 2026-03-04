@@ -8,4 +8,5 @@ dependencies = [
     "pandas>=2.3.3",
     "streamlit>=1.55.0",
     "streamlit-tags>=1.2.8",
+    "openpyxl>=3.1.2",
 ]

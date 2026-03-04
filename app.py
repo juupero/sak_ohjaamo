@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import uuid
+import io
 from streamlit_tags import st_tags
 
 st.set_page_config(page_title="Päiväkodin SAK-kalenteri", layout="wide")
@@ -21,6 +22,7 @@ html, body, [class*="css"] {
     line-height: 1.6 !important;
     padding: 8px 12px !important;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -721,7 +723,20 @@ else:
                         custom_only = [p.strip() for p in raw.split("|") if p.strip() and not p.strip().startswith(("⚠️", "🟡", "🎓", "📚"))]
                         st.session_state.calendars[g['id']].loc[hour, f"{day} Huomiot"] = " | ".join(custom_only)
                 st.rerun()
-    
+
+            # Excel download
+            buffer = io.BytesIO()
+            with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+                display_cal.to_excel(writer, sheet_name='Kalenteri')
+            
+            st.download_button(
+                label=f"📥 Lataa {g['name']} kalenteri Excelinä",
+                data=buffer.getvalue(),
+                file_name=f"SAK_Kalenteri_{g['name']}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key=f"export_{g['id']}"
+            )
+            
             st.markdown("#### SAK-kertymät tässä ryhmässä")
             for t_name in sorted(list(group_teachers)):
                 sak_count = 0
