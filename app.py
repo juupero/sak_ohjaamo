@@ -699,7 +699,7 @@ else:
                     width="small"
                 )
                 col_config[f"{day} Huomiot"] = st.column_config.TextColumn(
-                    f"{day[:2]}. Huom.",
+                    f"{day[:2]}. Huomiot",
                     help="Automaattiset varoitukset + oma teksti (erotin: |)",
                     width="medium"
                 )
@@ -728,6 +728,23 @@ else:
             buffer = io.BytesIO()
             with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
                 display_cal.to_excel(writer, sheet_name='Kalenteri')
+                worksheet = writer.sheets['Kalenteri']
+                from openpyxl.styles import Alignment
+                
+                for col_idx, col in enumerate(worksheet.columns, 1):
+                    max_length = 0
+                    column_letter = col[0].column_letter # Get the column name
+                    for cell in col:
+                        # Apply text wrapping to all cells
+                        cell.alignment = Alignment(wrap_text=True, vertical='top')
+                        try:
+                            if len(str(cell.value)) > max_length:
+                                max_length = len(str(cell.value))
+                        except:
+                            pass
+                    # Add a little extra padding, cap width to avoid insanely wide columns (max 35)
+                    adjusted_width = min((max_length + 2) * 1.2, 35)
+                    worksheet.column_dimensions[column_letter].width = adjusted_width
             
             st.download_button(
                 label=f"📥 Lataa {g['name']} kalenteri Excelinä",
