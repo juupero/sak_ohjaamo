@@ -5,6 +5,26 @@ from streamlit_tags import st_tags
 
 st.set_page_config(page_title="Päiväkodin SAK-kalenteri", layout="wide")
 
+st.markdown("""
+<style>
+/* Global font size increase */
+html, body, [class*="css"] {
+    font-size: 18px !important;
+}
+
+/* Calendar / data editor cell font size */
+[data-testid="stDataEditor"] td,
+[data-testid="stDataEditor"] th,
+[data-testid="stDataFrameResizable"] td,
+[data-testid="stDataFrameResizable"] th {
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+    padding: 8px 12px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # Vakiot
 DAYS = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai"]
 HOURS = ["08-09", "09-10", "10-11", "11-12", "12-13", "13-14", "14-15", "15-16"]
@@ -174,7 +194,7 @@ with st.sidebar:
 st.title("Päiväkodin Resurssi- ja SAK-ohjaamo")
 
 with st.expander("📖 Käyttöohje – miten sovellus toimii", expanded=False):
-    st.markdown("""
+    st.markdown(r"""
 ### Mikä tämä on?
 Tämä sovellus auttaa päiväkodin johtajaa tai tiimiä suunnittelemaan **SAK-ajat** (suunnittelu-, arviointi- ja kehittämisaika) viikkokalenteriin siten, että lakisääteiset suhdeluvut pysyvät kunnossa koko ajan.
 
@@ -551,6 +571,14 @@ else:
                 stats = g["daily_stats"][day]
                 load = calculate_child_load(stats["under_3"], stats["over_3"], stats["preschool"])
                 
+                # Cleanup legacy Nones from previous sessions
+                for hour in HOURS + ["Kapasiteetti"]:
+                    for col_suffix in [" SAK", " Henkilöstö", " Huomiot"]:
+                        val = cal.loc[hour, f"{day}{col_suffix}"]
+                        if pd.isna(val) or val == "None" or val is None:
+                            cal.loc[hour, f"{day}{col_suffix}"] = ""
+                            display_cal.loc[hour, f"{day}{col_suffix}"] = ""
+
                 # Capacity at generic hour 10-11
                 buf_10_11 = calculate_group_buffer(g, day, "10-11")
                 capacity = buf_10_11 + load
@@ -618,23 +646,23 @@ else:
                 styler = df.style
                 
                 def highlight_sak(s):
-                    return ['background-color: #d1e7dd; color: #0f5132' if pd.notna(v) and str(v).strip() != "" and str(v) != "nan" else '' for v in s]
+                    return ['background-color: #A8DBC6; color: #1B5E3B; font-weight: bold;' if pd.notna(v) and str(v).strip() != "" and str(v) != "nan" else '' for v in s]
                 
                 def highlight_staff(s):
-                    return ['background-color: #e2e3e5; color: #41464c; font-size: 0.85em;' if pd.notna(v) and str(v).strip() != "" and str(v) != "nan" else '' for v in s]
+                    return ['background-color: #E0EDE8; color: #3A5A52; font-size: 0.85em;' if pd.notna(v) and str(v).strip() != "" and str(v) != "nan" else '' for v in s]
                 
                 def highlight_program(s):
                     res = []
                     for v in s:
                         st_v = str(v)
                         if st_v == "Poissa":
-                            res.append("background-color: #e2e3e5; color: #41464c;")
+                            res.append("background-color: #D6DBD9; color: #5A6A66;")
                         elif st_v.startswith("⚠️"):
-                            res.append("background-color: #f8d7da; color: #842029; font-weight: bold;")
+                            res.append("background-color: #FFCDD2; color: #B71C1C; font-weight: bold;")
                         elif st_v.startswith("OK"):
-                            res.append("background-color: #e2e3e5; color: #41464c; font-size: 0.9em;")
+                            res.append("background-color: #E8F5E9; color: #388E3C; font-size: 0.9em;")
                         else:
-                            res.append("background-color: #cff4fc; color: #055160;" if st_v != "Työssä" else "")
+                            res.append("background-color: #B3E5FC; color: #01579B;" if st_v != "Työssä" else "")
                     return res
     
                 for day in DAYS:
@@ -642,6 +670,12 @@ else:
                     styler = styler.apply(highlight_sak, subset=[f"{day} SAK"])
                     styler = styler.apply(highlight_staff, subset=[f"{day} Henkilöstö"])
                     styler = styler.apply(highlight_staff, subset=[f"{day} Huomiot"])
+                    
+                # Apply base font size for the whole dataframe
+                styler = styler.set_properties(**{
+                    'font-size': '16px',
+                    'padding': '10px'
+                })
                     
                 return styler
     
