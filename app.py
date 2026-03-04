@@ -437,7 +437,7 @@ else:
     
     for i, g in enumerate(st.session_state.groups):
         with tabs[i]:
-            st.markdown("### 📆 Päivittäinen miehitys ja lapsimäärät")
+            st.markdown("### 📆 Päivittäinen kapasiteetti ja lapsimäärät")
             
             # Render 5 columns for days
             day_cols = st.columns(5)
