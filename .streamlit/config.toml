@@ -1,0 +1,16 @@
+[theme]
+base = "light"
+
+# Warm teal-green as the primary accent — nurturing, calm, professional
+primaryColor = "#3A9E7E"
+
+# Warm off-white background — softer than pure white, easier on the eyes
+backgroundColor = "#F5F7F5"
+
+# Very light mint for sidebar and secondary areas
+secondaryBackgroundColor = "#E8F4F0"
+
+# Dark blue-grey text — readable without being harsh black
+textColor = "#2C3D3A"
+
+font = "sans serif"
