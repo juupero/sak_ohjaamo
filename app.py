@@ -171,7 +171,7 @@ with st.sidebar:
                 st.rerun()
 
 # ----------------- MASTER DASHBOARD -----------------
-st.title("sak_ohjaamo - Päiväkodin Resurssi- ja SAK-ohjaamo")
+st.title("Päiväkodin Resurssi- ja SAK-ohjaamo")
 
 total_children_mon = sum(g["daily_stats"]["Maanantai"]["under_3"] + g["daily_stats"]["Maanantai"]["over_3"] + g["daily_stats"]["Maanantai"]["preschool"] for g in st.session_state.groups)
 total_staff_mon = sum(len(g["daily_stats"]["Maanantai"]["teachers"]) + len(g["daily_stats"]["Maanantai"]["nurses"]) for g in st.session_state.groups)
