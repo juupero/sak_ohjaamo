@@ -204,11 +204,11 @@ Kalenteri näyttää tunnit 08–16 viikonpäivittäin. Sarakkeet:
 | **[Pv] Huom.** | Automaattiset varoitukset + omat muistiinpanot (erotin `\|`). |
 | **Kapasiteetti** | Rivikohtainen OK/Vajaa-tarkistus. |
 
-**Värikoodit:**
-- 🟢 Vihreä = SAK-aika asetettu
-- 🔴 Punainen = ylikapasiteetti tai alimiehitys
-- 🔵 Sininen = poikkeava tapahtuma (esim. palaveri)
-- ⬜ Harmaa = Poissa
+**Värikoodit** (näkyvät kalenteritaulukon solujen taustaväreinä):
+- 🟢 **Vihreä** – SAK-sarake: opettaja on asetettu SAK-vuoroon
+- 🔴 **Punainen** – Ohjelma-sarake tai Kapasiteetti-rivi: alimiehitys (⚠️)
+- 🔵 **Sininen** – Ohjelma-sarake: jokin muu tapahtuma kuin normaali päiväohjelma (esim. palaveri)
+- ⬜ **Harmaa** – Ohjelma-sarake: "Poissa" tai Extrat-sarake kun siinä on teksti
 
 ### 5. Seuraa SAK-kertymää
 Jokaisen ryhmän välilehden alaosassa näkyy **SAK-kertymät**: kuinka monta tuntia kullekin opettajalle on merkitty (tavoite 5 h/vk). Yläosassa näkyvät **hälytykset** puuttuvista SAK-tunneista tai alimiehityksistä.
@@ -678,7 +678,7 @@ else:
             if not display_cal.equals(edited_cal):
                 # Sync back editable columns to the source dataframe
                 for day in DAYS:
-                    st.session_state.calendars[g['id']].loc[:, f"{day} SAK"] = edited_cal.loc[:, f"{day} SAK"]
+                    st.session_state.calendars[g['id']].loc[:, f"{day} SAK"] = edited_cal.loc[:, f"{day} SAK"].fillna("").replace({None: ""})
                     st.session_state.calendars[g['id']].loc[:, f"{day} Henkilöstö"] = edited_cal.loc[:, f"{day} Henkilöstö"]
                     # Strip auto-warnings back so only custom parts persist
                     for hour in HOURS:
